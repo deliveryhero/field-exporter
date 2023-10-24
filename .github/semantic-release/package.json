@@ -1,0 +1,10 @@
+{
+  "name": "gdp-demo-app-sem-release-plugin",
+  "devDependencies": {
+    "@semantic-release/changelog": "^3.0.6",
+    "@semantic-release/exec": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/npm": "^9.0.1",
+    "semantic-release": "^19.0.5"
+  }
+}
