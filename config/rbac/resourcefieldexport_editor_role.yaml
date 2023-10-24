@@ -1,0 +1,31 @@
+# permissions for end users to edit resourcefieldexports.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: resourcefieldexport-editor-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: field-exporter
+    app.kubernetes.io/part-of: field-exporter
+    app.kubernetes.io/managed-by: kustomize
+  name: resourcefieldexport-editor-role
+rules:
+- apiGroups:
+  - gdp.deliveryhero.io
+  resources:
+  - resourcefieldexports
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - gdp.deliveryhero.io
+  resources:
+  - resourcefieldexports/status
+  verbs:
+  - get

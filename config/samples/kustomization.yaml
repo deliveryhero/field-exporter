@@ -1,0 +1,4 @@
+## Append samples of your project ##
+resources:
+- gdp_v1alpha1_resourcefieldexport.yaml
+#+kubebuilder:scaffold:manifestskustomizesamples

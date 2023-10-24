@@ -1,0 +1,25 @@
+apiVersion: gdp.deliveryhero.io/v1alpha1
+kind: ResourceFieldExport
+metadata:
+  labels:
+    app.kubernetes.io/name: resourcefieldexport
+    app.kubernetes.io/instance: resourcefieldexport-sample
+    app.kubernetes.io/part-of: field-exporter
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: field-exporter
+  name: test-export
+spec:
+  from:
+    apiVersion: rds.services.k8s.aws/v1alpha1
+    kind: DBCluster
+    name: oamapp-0022-db
+  to:
+    type: ConfigMap
+    name: test-cm
+  requiredFields:
+    statusConditions:
+      - type: ACK.ResourceSynced
+        status: "False"
+  outputs:
+    - key: endpoint
+      path: .status.endpoint
