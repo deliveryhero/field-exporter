@@ -1,17 +1,18 @@
 package resourcefieldexport
 
 import (
+	"context"
 	"fmt"
 	"github.com/itchyny/gojq"
 )
 
-func fieldValues(input map[string]interface{}, queryString string) (any, error) {
+func fieldValues(ctx context.Context, input map[string]interface{}, queryString string) (any, error) {
 	query, err := gojq.Parse(queryString)
 	if err != nil {
 		return "", fmt.Errorf("invalid query %q: %w", queryString, err)
 	}
 
-	resultIter := query.Run(input)
+	resultIter := query.RunWithContext(ctx, input)
 	var results []any
 	for {
 		value, ok := resultIter.Next()
@@ -21,6 +22,9 @@ func fieldValues(input map[string]interface{}, queryString string) (any, error) 
 		if err, ok := value.(error); ok {
 			return "", err
 		}
+		if value == nil {
+			continue
+		}
 		results = append(results, value)
 	}
 	if len(results) == 0 {
@@ -28,14 +32,14 @@ func fieldValues(input map[string]interface{}, queryString string) (any, error) 
 	}
 
 	if len(results) != 1 {
-		return "", fmt.Errorf("query %q returned more than one result: %v", queryString, results)
+		return "", fmt.Errorf("query %s returned more than one result: %v", queryString, results)
 	}
 
 	return results[0], nil
 }
 
-func fieldStringValue(input map[string]interface{}, path string) (string, error) {
-	result, err := fieldValues(input, path)
+func fieldStringValue(ctx context.Context, input map[string]interface{}, query string) (string, error) {
+	result, err := fieldValues(ctx, input, query)
 	if err != nil {
 		return "", err
 	}
@@ -48,6 +52,6 @@ func fieldStringValue(input map[string]interface{}, path string) (string, error)
 	case bool:
 		return fmt.Sprintf("%t", x), nil
 	default:
-		return "", fmt.Errorf("unsupported data type %T for path %s", result, path)
+		return "", fmt.Errorf("unsupported data type %T for query %s", result, query)
 	}
 }

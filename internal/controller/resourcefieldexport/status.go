@@ -3,21 +3,27 @@ package resourcefieldexport
 import (
 	"context"
 	"errors"
-	"github.com/deliveryhero/field-exporter/api/v1alpha1"
+	"time"
+
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/pointer"
 	"sigs.k8s.io/controller-runtime"
-	"time"
+
+	"github.com/deliveryhero/field-exporter/api/v1alpha1"
 )
 
 func (r *Reconciler) degradedStatusWithRetry(ctx context.Context, exports *v1alpha1.ResourceFieldExport, trigger error, requeueAfter time.Duration) (controllerruntime.Result, error) {
 	exports = exports.DeepCopy()
 	conditions := exports.Status.Conditions
 	found := -1
+	updateNeeded := true
 	for i, c := range conditions {
 		if c.Type == readyCondition {
 			found = i
+		}
+		if c.Status == v1.ConditionFalse && c.Message != nil && *c.Message == trigger.Error() {
+			updateNeeded = false
 		}
 	}
 	if found < 0 {
@@ -27,10 +33,12 @@ func (r *Reconciler) degradedStatusWithRetry(ctx context.Context, exports *v1alp
 		})
 		found = len(conditions) - 1
 	}
-	conditions[found].LastTransitionTime = now()
-	conditions[found].Message = pointer.String(trigger.Error())
-
-	err := r.Status().Update(ctx, exports)
+	var err error
+	if updateNeeded {
+		conditions[found].LastTransitionTime = now()
+		conditions[found].Message = pointer.String(trigger.Error())
+		err = r.Status().Update(ctx, exports)
+	}
 	return controllerruntime.Result{RequeueAfter: requeueAfter}, errors.Join(trigger, err)
 }
 

@@ -19,11 +19,11 @@ package resourcefieldexport
 import (
 	"context"
 	"fmt"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 	"time"
 
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
@@ -75,7 +75,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 	}
 
 	if fieldExports.Spec.RequiredFields != nil {
-		retry, err := verifyStatusConditions(objectMap, fieldExports.Spec.RequiredFields.StatusConditions)
+		retry, err := verifyStatusConditions(ctx, objectMap, fieldExports.Spec.RequiredFields.StatusConditions)
 		if err != nil {
 			if retry {
 				return r.degradedStatusWithRetry(ctx, fieldExports, err, time.Second*10)
@@ -86,7 +86,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 
 	cmValues := make(map[string]string)
 	for _, export := range fieldExports.Spec.Outputs {
-		value, err := fieldStringValue(objectMap, export.Path)
+		value, err := fieldStringValue(ctx, objectMap, export.Path)
 		if err != nil {
 			return r.degradedStatus(ctx, fieldExports, err)
 		}

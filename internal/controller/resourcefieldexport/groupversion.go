@@ -2,9 +2,11 @@ package resourcefieldexport
 
 import (
 	"fmt"
-	"github.com/deliveryhero/field-exporter/api/v1alpha1"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 	"strings"
+
+	"k8s.io/apimachinery/pkg/runtime/schema"
+
+	"github.com/deliveryhero/field-exporter/api/v1alpha1"
 )
 
 const (

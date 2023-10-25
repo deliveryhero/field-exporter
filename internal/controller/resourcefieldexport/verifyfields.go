@@ -1,17 +1,20 @@
 package resourcefieldexport
 
 import (
+	"context"
 	"errors"
 	"fmt"
-	gdpv1alpha1 "github.com/deliveryhero/field-exporter/api/v1alpha1"
+
 	"k8s.io/apimachinery/pkg/util/json"
+
+	gdpv1alpha1 "github.com/deliveryhero/field-exporter/api/v1alpha1"
 )
 
-func verifyStatusConditions(objectMap map[string]any, requiredStatusConditions []gdpv1alpha1.StatusCondition) (bool, error) {
+func verifyStatusConditions(ctx context.Context, objectMap map[string]any, requiredStatusConditions []gdpv1alpha1.StatusCondition) (bool, error) {
 	if len(requiredStatusConditions) == 0 {
 		return false, nil
 	}
-	conditions, err := statusConditions(objectMap)
+	conditions, err := statusConditions(ctx, objectMap)
 	if err != nil {
 		// todo: indicate this in the status
 		return false, err
@@ -21,7 +24,6 @@ func verifyStatusConditions(objectMap map[string]any, requiredStatusConditions [
 		conditionByType[c.Type] = c.Status
 	}
 	var conditionErrors []error
-	var retry bool
 	for _, condition := range requiredStatusConditions {
 		var (
 			value string
@@ -33,14 +35,13 @@ func verifyStatusConditions(objectMap map[string]any, requiredStatusConditions [
 		}
 		if condition.Status != value {
 			conditionErrors = append(conditionErrors, fmt.Errorf("status condition %s has value %s, expected %s", condition.Type, value, condition.Status))
-			retry = true
 		}
 	}
-	return retry, errors.Join(conditionErrors...)
+	return len(conditionErrors) > 0, errors.Join(conditionErrors...)
 }
 
-func statusConditions(input map[string]any) ([]knownCondition, error) {
-	conditions, err := fieldValues(input, ".status.conditions")
+func statusConditions(ctx context.Context, input map[string]any) ([]knownCondition, error) {
+	conditions, err := fieldValues(ctx, input, ".status.conditions")
 	if err != nil {
 		return nil, fmt.Errorf("failed to get status conditions: %w", err)
 	}
