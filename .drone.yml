@@ -1,0 +1,103 @@
+kind: pipeline
+type: docker
+name: build
+
+trigger:
+  event:
+    - pull_request
+
+steps:
+  - name: build
+    image: golang:1.20-alpine
+    commands:
+      - apk add --no-cache git make build-base
+      - make test build
+    depends_on:
+      - clone
+
+  - name: dry-run-docker
+    image: plugins/ecr
+    settings:
+      dry_run: true
+      repo: ${DRONE_REPO}
+      tags:
+        - build-${DRONE_BUILD_NUMBER}
+    depends_on:
+      - clone
+
+---
+kind: pipeline
+type: docker
+name: lint
+
+trigger:
+  event:
+    - pull_request
+
+steps:
+  - name: lint
+    image: golangci/golangci-lint:v1.50
+    commands:
+      - make lint
+
+---
+kind: pipeline
+type: docker
+name: versioning
+
+trigger:
+  paths:
+    exclude:
+      - "deploy/**" # don't version on oam manifest changes
+  branch:
+    - main
+  event:
+    - push
+
+steps:
+  - name: semantic-release
+    image: node:14.17-alpine
+    environment:
+      GITHUB_TOKEN:
+        from_secret: GH_READ_TOKEN
+    commands:
+      - apk add git
+      - cp -r .github/semantic-release/. .
+      - npm i --silent
+      - npx semantic-release
+
+# ---
+# kind: pipeline
+# type: docker
+# name: release
+
+# trigger:
+#   event:
+#     - tag
+
+# steps:
+#   - name: push-tag
+#     image: plugins/ecr
+#     settings:
+#       registry: 824539323825.dkr.ecr.eu-west-1.amazonaws.com
+#       repo: ${DRONE_REPO}
+#       tags:
+#         - ${DRONE_TAG}
+
+#   - name: image-update
+#     image: 824539323825.dkr.ecr.eu-west-1.amazonaws.com/deliveryhero/dp-image-updater-demo:v1.1.0
+#     settings:
+#       file: ./deploy/staging/app.yaml
+#       repo: ${DRONE_REPO}
+#       tag: ${DRONE_TAG}
+#       ghtoken:
+#         from_secret: GH_READ_TOKEN
+
+#   - name: github-release
+#     image: plugins/github-release
+#     settings:
+#       title: oam-canary-demo
+#       api_key:
+#         from_secret: GH_READ_TOKEN
+#       note: /drone/src/CHANGELOG.md
+#       overwrite: true
