@@ -38,7 +38,7 @@ steps:
   - name: lint
     image: golangci/golangci-lint:v1.50
     commands:
-      - make lint
+      - golangci-lint run -v
 
 ---
 kind: pipeline
