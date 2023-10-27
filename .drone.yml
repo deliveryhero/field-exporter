@@ -36,3 +36,4 @@ steps:
         from_secret: DP_ARTIFACT_REGISTRY_JSON_KEY
       tags:
         - ${DRONE_COMMIT}
+        - latest
