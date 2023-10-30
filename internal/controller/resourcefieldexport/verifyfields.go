@@ -10,14 +10,13 @@ import (
 	gdpv1alpha1 "github.com/deliveryhero/field-exporter/api/v1alpha1"
 )
 
-func verifyStatusConditions(ctx context.Context, objectMap map[string]any, requiredStatusConditions []gdpv1alpha1.StatusCondition) (bool, error) {
+func verifyStatusConditions(ctx context.Context, objectMap map[string]any, requiredStatusConditions []gdpv1alpha1.StatusCondition) error {
 	if len(requiredStatusConditions) == 0 {
-		return false, nil
+		return nil
 	}
 	conditions, err := statusConditions(ctx, objectMap)
 	if err != nil {
-		// todo: indicate this in the status
-		return false, err
+		return err
 	}
 	conditionByType := make(map[string]string)
 	for _, c := range conditions {
@@ -37,7 +36,7 @@ func verifyStatusConditions(ctx context.Context, objectMap map[string]any, requi
 			conditionErrors = append(conditionErrors, fmt.Errorf("status condition %s has value %s, expected %s", condition.Type, value, condition.Status))
 		}
 	}
-	return len(conditionErrors) > 0, errors.Join(conditionErrors...)
+	return errors.Join(conditionErrors...)
 }
 
 func statusConditions(ctx context.Context, input map[string]any) ([]knownCondition, error) {
