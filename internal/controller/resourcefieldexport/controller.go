@@ -19,7 +19,6 @@ package resourcefieldexport
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -75,11 +74,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 	}
 
 	if fieldExports.Spec.RequiredFields != nil {
-		retry, err := verifyStatusConditions(ctx, objectMap, fieldExports.Spec.RequiredFields.StatusConditions)
-		if err != nil {
-			if retry {
-				return r.degradedStatusWithRetry(ctx, fieldExports, err, time.Second*10)
-			}
+		if err := verifyStatusConditions(ctx, objectMap, fieldExports.Spec.RequiredFields.StatusConditions); err != nil {
 			return r.degradedStatus(ctx, fieldExports, err)
 		}
 	}
@@ -102,7 +97,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 		return r.degradedStatus(ctx, fieldExports, fmt.Errorf("unsupported destination type: %s", fieldExports.Spec.To.Type))
 	}
 
-	return ctrl.Result{}, nil
+	return r.readyStatus(ctx, fieldExports)
 }
 
 // SetupWithManager sets up the controller with the Manager.
