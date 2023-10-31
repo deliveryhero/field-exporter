@@ -4,7 +4,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"k8s.io/apimachinery/pkg/util/json"
@@ -93,12 +92,10 @@ func TestVerifyStatusConditions(t *testing.T) {
 		inputConditions    string
 		requiredConditions []gdpv1alpha1.StatusCondition
 		expectErr          string
-		shouldRetry        bool
 	}{
 		{
 			name:            "no required conditions",
 			inputConditions: `{}`,
-			shouldRetry:     false,
 		},
 		{
 			name:            "conditions empty",
@@ -109,8 +106,7 @@ func TestVerifyStatusConditions(t *testing.T) {
 					Status: "True",
 				},
 			},
-			expectErr:   "status condition Ready is not present",
-			shouldRetry: true,
+			expectErr: "status condition Ready is not present",
 		},
 		{
 			name:            "conditions match",
@@ -121,7 +117,6 @@ func TestVerifyStatusConditions(t *testing.T) {
 					Status: "True",
 				},
 			},
-			shouldRetry: false,
 		},
 		{
 			name:            "conditions mismatch",
@@ -132,14 +127,12 @@ func TestVerifyStatusConditions(t *testing.T) {
 					Status: "True",
 				},
 			},
-			shouldRetry: true,
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			input := make(map[string]any)
 			require.NoError(t, json.Unmarshal([]byte(tc.inputConditions), &input))
-			shouldRetyr, err := verifyStatusConditions(context.Background(), input, tc.requiredConditions)
-			assert.Equal(t, tc.shouldRetry, shouldRetyr)
+			err := verifyStatusConditions(context.Background(), input, tc.requiredConditions)
 			if tc.expectErr != "" {
 				require.Error(t, err)
 				require.ErrorContains(t, err, tc.expectErr)

@@ -3,7 +3,6 @@ package resourcefieldexport
 import (
 	"context"
 	"errors"
-	"time"
 
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -13,7 +12,7 @@ import (
 	"github.com/deliveryhero/field-exporter/api/v1alpha1"
 )
 
-func (r *Reconciler) degradedStatusWithRetry(ctx context.Context, exports *v1alpha1.ResourceFieldExport, trigger error, requeueAfter time.Duration) (controllerruntime.Result, error) {
+func (r *Reconciler) degradedStatus(ctx context.Context, exports *v1alpha1.ResourceFieldExport, trigger error) (controllerruntime.Result, error) {
 	exports = exports.DeepCopy()
 	conditions := exports.Status.Conditions
 	found := -1
@@ -28,8 +27,7 @@ func (r *Reconciler) degradedStatusWithRetry(ctx context.Context, exports *v1alp
 	}
 	if found < 0 {
 		conditions = append(conditions, v1alpha1.Condition{
-			Type:   readyCondition,
-			Status: v1.ConditionFalse,
+			Type: readyCondition,
 		})
 		found = len(conditions) - 1
 	}
@@ -37,13 +35,41 @@ func (r *Reconciler) degradedStatusWithRetry(ctx context.Context, exports *v1alp
 	if updateNeeded {
 		conditions[found].LastTransitionTime = now()
 		conditions[found].Message = pointer.String(trigger.Error())
+		conditions[found].Status = v1.ConditionFalse
+		exports.Status.Conditions = conditions
 		err = r.Status().Update(ctx, exports)
 	}
-	return controllerruntime.Result{RequeueAfter: requeueAfter}, errors.Join(trigger, err)
+	return controllerruntime.Result{}, errors.Join(trigger, err)
 }
 
-func (r *Reconciler) degradedStatus(ctx context.Context, exports *v1alpha1.ResourceFieldExport, trigger error) (controllerruntime.Result, error) {
-	return r.degradedStatusWithRetry(ctx, exports, trigger, 0) // 0 for time.Duration indicates the error will not be re-queued
+func (r *Reconciler) readyStatus(ctx context.Context, exports *v1alpha1.ResourceFieldExport) (controllerruntime.Result, error) {
+	exports = exports.DeepCopy()
+	conditions := exports.Status.Conditions
+	found := -1
+	updateNeeded := true
+	for i, c := range conditions {
+		if c.Type == readyCondition {
+			found = i
+		}
+		if c.Status == v1.ConditionTrue && c.Message != nil && *c.Message == "Fields Synced" {
+			updateNeeded = false
+		}
+	}
+	if found < 0 {
+		conditions = append(conditions, v1alpha1.Condition{
+			Type: readyCondition,
+		})
+		found = len(conditions) - 1
+	}
+	var err error
+	if updateNeeded {
+		conditions[found].LastTransitionTime = now()
+		conditions[found].Message = pointer.String("Fields Synced")
+		conditions[found].Status = v1.ConditionTrue
+		exports.Status.Conditions = conditions
+		err = r.Status().Update(ctx, exports)
+	}
+	return controllerruntime.Result{}, err
 }
 
 func now() *metav1.Time {

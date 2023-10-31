@@ -10,16 +10,18 @@ metadata:
   name: test-export
 spec:
   from:
-    apiVersion: rds.services.k8s.aws/v1alpha1
-    kind: DBCluster
-    name: oamapp-0022-db
+    apiVersion: redis.cnrm.cloud.google.com/v1beta1
+    kind: RedisInstance
+    name: test-redis-instance
   to:
     type: ConfigMap
     name: test-cm
   requiredFields:
     statusConditions:
-      - type: ACK.ResourceSynced
-        status: "False"
+      - type: Ready
+        status: True
   outputs:
-    - key: endpoint
-      path: .status.endpoint
+    - key: host
+      path: .status.host
+    - key: port
+      path: .status.port
