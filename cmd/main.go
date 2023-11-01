@@ -18,13 +18,15 @@ package main
 
 import (
 	"flag"
-	"github.com/deliveryhero/field-exporter/internal/controller/resourcefieldexport"
 	"os"
+
+	"github.com/deliveryhero/field-exporter/internal/controller/resourcefieldexport"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
+	kccredis "github.com/GoogleCloudPlatform/k8s-config-connector/pkg/clients/generated/apis/redis/v1beta1"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
@@ -43,6 +45,7 @@ var (
 )
 
 func init() {
+	utilruntime.Must(kccredis.AddToScheme(scheme))
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
 	utilruntime.Must(gdpv1alpha1.AddToScheme(scheme))
