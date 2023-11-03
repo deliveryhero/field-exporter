@@ -13,7 +13,6 @@ steps:
     commands:
       - golangci-lint run || true
 
-
 ---
 kind: pipeline
 type: docker
