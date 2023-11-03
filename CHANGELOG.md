@@ -4,6 +4,16 @@
 ### Features
 
 * Bump first version ([#12](https://github.com/deliveryhero/field-exporter/issues/12)) ([4e7917f](https://github.com/deliveryhero/field-exporter/commit/4e7917f1f7cb6f9e275c0c87b436bac48fbf1e58))
+* First version ([#14](https://github.com/deliveryhero/field-exporter/issues/14)) ([790e019](https://github.com/deliveryhero/field-exporter/commit/790e019a6317fb05d4d4e2f8b39668bc43695c03))
+* Publish field-exporter ([ece7a31](https://github.com/deliveryhero/field-exporter/commit/ece7a31e8179a22176ea0588e5e9d4de2c5abb26))
+* Remove push on PR ([#13](https://github.com/deliveryhero/field-exporter/issues/13)) ([fd3630e](https://github.com/deliveryhero/field-exporter/commit/fd3630e6865f5cce9d57013da6a82576016bb824))
+
+# 1.0.0 (2023-11-03)
+
+
+### Features
+
+* Bump first version ([#12](https://github.com/deliveryhero/field-exporter/issues/12)) ([4e7917f](https://github.com/deliveryhero/field-exporter/commit/4e7917f1f7cb6f9e275c0c87b436bac48fbf1e58))
 * Publish field-exporter ([ece7a31](https://github.com/deliveryhero/field-exporter/commit/ece7a31e8179a22176ea0588e5e9d4de2c5abb26))
 * Remove push on PR ([#13](https://github.com/deliveryhero/field-exporter/issues/13)) ([fd3630e](https://github.com/deliveryhero/field-exporter/commit/fd3630e6865f5cce9d57013da6a82576016bb824))
 
