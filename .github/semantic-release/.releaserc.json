@@ -1,0 +1,17 @@
+{
+  "branches": ["main"],
+  "verifyConditions": ["@semantic-release/changelog", "@semantic-release/git"],
+  "prepare": [
+    "@semantic-release/changelog",
+    {
+      "path": "@semantic-release/exec",
+      "cmd": "echo -n \"${nextRelease.version}\" > .release-version"
+    },
+    {
+      "path": "@semantic-release/git",
+      "assets": ["CHANGELOG.md"],
+      "message": "release: ${nextRelease.version} [ci skip]"
+    }
+  ],
+  "publish": false
+}
