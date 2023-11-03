@@ -13,29 +13,6 @@ steps:
     commands:
       - golangci-lint run || true
 
----
-kind: pipeline
-type: docker
-name: push-on-pull-request
-
-trigger:
-  event:
-    - pull_request
-
-features:
-  docker-daemon@v1:
-    enabled: true
-
-steps:
-  - name: push
-    image: plugins/gcr
-    settings:
-      registry: europe-docker.pkg.dev
-      repo: dp-common-infra-5780/developer-platform-public/deliveryhero/field-exporter
-      json_key:
-        from_secret: DP_ARTIFACT_REGISTRY_JSON_KEY
-      tags:
-        - ${DRONE_COMMIT}
 
 ---
 kind: pipeline
