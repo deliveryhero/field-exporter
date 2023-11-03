@@ -16,11 +16,11 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: push
+name: push-on-pull-request
 
 trigger:
   event:
-    - push
+    - pull_request
 
 features:
   docker-daemon@v1:
@@ -36,7 +36,6 @@ steps:
         from_secret: DP_ARTIFACT_REGISTRY_JSON_KEY
       tags:
         - ${DRONE_COMMIT}
-        - latest
 
 ---
 kind: pipeline
@@ -86,14 +85,19 @@ trigger:
   event:
     - tag
 
+features:
+  docker-daemon@v1:
+    enabled: true
+
 steps:
   - name: push-tag
-    image: plugins/ecr
+    image: plugins/gcr
     settings:
       registry: europe-docker.pkg.dev
       repo: dp-common-infra-5780/developer-platform-public/deliveryhero/field-exporter
       tags:
         - ${DRONE_TAG}
+        - latest
       json_key:
         from_secret: DP_ARTIFACT_REGISTRY_JSON_KEY
 
@@ -106,6 +110,5 @@ steps:
         from_secret: GH_READ_TOKEN
       note: /drone/src/CHANGELOG.md
       overwrite: true
-
 
 
