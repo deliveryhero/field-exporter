@@ -52,6 +52,7 @@ type Reconciler struct {
 //+kubebuilder:rbac:groups=gdp.deliveryhero.io,resources=resourcefieldexports,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=gdp.deliveryhero.io,resources=resourcefieldexports/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=gdp.deliveryhero.io,resources=resourcefieldexports/finalizers,verbs=update
+//+kubebuilder:rbac:groups=core,resources=configmaps;secrets,verbs=get;list;update;patch
 //+kubebuilder:rbac:groups=alloydb.cnrm.cloud.google.com,resources=*,verbs=get;list;watch
 //+kubebuilder:rbac:groups=iam.cnrm.cloud.google.com,resources=*,verbs=get;list;watch
 //+kubebuilder:rbac:groups=redis.cnrm.cloud.google.com,resources=*,verbs=get;list;watch
