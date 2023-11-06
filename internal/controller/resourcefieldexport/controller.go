@@ -106,6 +106,10 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 		return r.degradedStatus(ctx, fieldExports, fmt.Errorf("unsupported destination type: %s", fieldExports.Spec.To.Type))
 	}
 
+	if err != nil {
+		return r.degradedStatus(ctx, fieldExports, fmt.Errorf("failed to write to destination: %s", err))
+	}
+
 	return r.readyStatus(ctx, fieldExports)
 }
 
