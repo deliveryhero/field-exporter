@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/deliveryhero/field-exporter/compare/v1.0.1...v1.0.2) (2023-11-07)
+
+
+### Bug Fixes
+
+* enable golangci-lint ([1a02eba](https://github.com/deliveryhero/field-exporter/commit/1a02ebaac0d6a70b8d7d4f3c881d20e3c53c93de))
+
 ## [1.0.1](https://github.com/deliveryhero/field-exporter/compare/v1.0.0...v1.0.1) (2023-11-07)
 
 
