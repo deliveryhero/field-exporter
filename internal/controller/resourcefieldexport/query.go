@@ -3,6 +3,7 @@ package resourcefieldexport
 import (
 	"context"
 	"fmt"
+
 	"github.com/itchyny/gojq"
 )
 

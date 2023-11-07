@@ -172,3 +172,7 @@ $(HELMIFY): $(LOCALBIN)
     
 helm: manifests kustomize helmify
 	$(KUSTOMIZE) build config/default | $(HELMIFY)
+
+.PHONY: lint
+lint:
+	golangci-lint run -c .golangci.yaml

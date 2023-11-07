@@ -9,9 +9,9 @@ trigger:
 
 steps:
   - name: lint
-    image: golangci/golangci-lint:v1.50
+    image: golangci/golangci-lint:v1.55
     commands:
-      - golangci-lint run || true
+      - golangci-lint -c .golangci.yaml run
 
 ---
 kind: pipeline

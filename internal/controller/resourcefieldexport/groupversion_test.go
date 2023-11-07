@@ -1,9 +1,10 @@
 package resourcefieldexport
 
 import (
+	"testing"
+
 	gdpv1alpha1 "github.com/deliveryhero/field-exporter/api/v1alpha1"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestGroupVersion(t *testing.T) {
