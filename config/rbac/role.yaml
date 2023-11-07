@@ -13,6 +13,16 @@ rules:
   - list
   - watch
 - apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - secrets
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+- apiGroups:
   - gdp.deliveryhero.io
   resources:
   - resourcefieldexports
