@@ -1,3 +1,11 @@
+## [1.0.1](https://github.com/deliveryhero/field-exporter/compare/v1.0.0...v1.0.1) (2023-11-07)
+
+
+### Bug Fixes
+
+* report error on write failure ([49e3bd5](https://github.com/deliveryhero/field-exporter/commit/49e3bd5596701c8f7e775e0146d3dda0f1dc8475))
+* update rbac permissions ([e9ff8e2](https://github.com/deliveryhero/field-exporter/commit/e9ff8e21d6627c2a007d9860b434ee0367f6975a))
+
 # 1.0.0 (2023-11-03)
 
 
