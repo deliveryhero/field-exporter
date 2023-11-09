@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/deliveryhero/field-exporter/compare/v1.0.2...v1.0.3) (2023-11-09)
+
+
+### Bug Fixes
+
+* misc changes to README, add SECURITY.md ([#18](https://github.com/deliveryhero/field-exporter/issues/18)) ([42126e9](https://github.com/deliveryhero/field-exporter/commit/42126e9efbb01e44376cdaf99e6a1e462dfd735a))
+
 ## [1.0.2](https://github.com/deliveryhero/field-exporter/compare/v1.0.1...v1.0.2) (2023-11-07)
 
 
