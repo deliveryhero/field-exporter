@@ -1,4 +1,4 @@
-# Delivery Hero field-exporter
+# field-exporter
 [![dh](./img/dh-logo.png)](#)
 
 ## Description
@@ -6,6 +6,21 @@ This controller is used to fill the gap
 in [k8s-config-connector](https://github.com/GoogleCloudPlatform/k8s-config-connector) for exporting value from Config
 Connector managed resources into Secrets and ConfigMaps.
 
+Currently supported Config Connector resources:
+
+- [RedisInstance](https://cloud.google.com/config-connector/docs/reference/resource-docs/redis/redisinstance)
+
+Here is an example resource for the controller:
+
+```yaml
+
+```
+
+Which will create a `ConfigMap` that can be used to [add environment variables](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#configure-all-key-value-pairs-in-a-configmap-as-container-environment-variables) to your Kubernetes pod:
+
+```yaml
+
+```
 
 ## Getting Started
 You’ll need a Kubernetes cluster to run against. You can use [KIND](https://sigs.k8s.io/kind) to get a local cluster for testing, or run against a remote cluster.
@@ -15,7 +30,7 @@ You’ll need a Kubernetes cluster to run against. You can use [KIND](https://si
 
 Follow [chart doc](https://github.com/deliveryhero/helm-charts/tree/master/stable/field-exporter) to install Field Exporter with CRDs
 
-### Running on the cluster manually 
+### Running on the cluster manually
 1. Install Instances of Custom Resources:
 
 ```sh
@@ -47,7 +62,6 @@ UnDeploy the controller from the cluster:
 ```sh
 make undeploy
 ```
-
 
 ### How it works
 This project aims to follow the Kubernetes [Operator pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/).
@@ -84,9 +98,8 @@ More information can be found via the [Kubebuilder Documentation](https://book.k
 ## Contributing
 To contribute, please read our [contributing docs](CONTRIBUTING.md).
 
-
 ## License
 
-Copyright © 2023 Delivery Hero SE 
+Copyright © 2023 Delivery Hero SE
 
 Contents of this repository is licensed under the Apache-2.0 [License](LICENSE).

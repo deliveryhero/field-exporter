@@ -1,4 +1,4 @@
-# Contributing to Delivery Hero field-exporter
+# Contributing to field-exporter
 
 Contributions are welcome ❤️
 
