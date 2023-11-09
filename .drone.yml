@@ -16,7 +16,7 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: build-test
+name: test
 
 trigger:
   event:
@@ -27,7 +27,7 @@ features:
     enabled: true
 
 steps:
-  - name: build-lint
+  - name: test
     image: golang:1.21-alpine
     commands:
       - apk add --no-cache make bash
