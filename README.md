@@ -36,7 +36,7 @@ spec:
     type: ConfigMap
 ```
 
-Which will create a `ConfigMap` that can be used to [add environment variables](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#configure-all-key-value-pairs-in-a-configmap-as-container-environment-variables) to your Kubernetes pod:
+Which will update a `ConfigMap` with data that can be used to [add environment variables](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#configure-all-key-value-pairs-in-a-configmap-as-container-environment-variables) to your Kubernetes pod:
 
 ```yaml
 apiVersion: v1
@@ -48,6 +48,8 @@ data:
   endpoint: 10.111.1.3
   port: 6379
 ```
+
+The controller can also update a `Secret`.
 
 ## Getting Started
 You’ll need a Kubernetes cluster to run against. You can use [KIND](https://sigs.k8s.io/kind) to get a local cluster for testing, or run against a remote cluster.
