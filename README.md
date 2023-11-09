@@ -13,13 +13,40 @@ Currently supported Config Connector resources:
 Here is an example resource for the controller:
 
 ```yaml
-
+apiVersion: gdp.deliveryhero.io/v1alpha1
+kind: ResourceFieldExport
+metadata:
+  name: myapp-redis
+spec:
+  from:
+    apiVersion: redis.cnrm.cloud.google.com/v1beta1
+    kind: RedisInstance
+    name: myapp-redis
+  outputs:
+    - key: endpoint
+      path: .status.host
+    - key: port
+      path: .status.port
+  requiredFields:
+    statusConditions:
+      - status: "True"
+        type: Ready
+  to:
+    name: myapp-redis-config
+    type: ConfigMap
 ```
 
 Which will create a `ConfigMap` that can be used to [add environment variables](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#configure-all-key-value-pairs-in-a-configmap-as-container-environment-variables) to your Kubernetes pod:
 
 ```yaml
-
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: special-config
+  namespace: default
+data:
+  endpoint: 10.111.1.3
+  port: 6379
 ```
 
 ## Getting Started
