@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/deliveryhero/field-exporter/compare/v1.0.3...v1.0.4) (2023-11-10)
+
+
+### Bug Fixes
+
+* allow controller to watch secrets ([#20](https://github.com/deliveryhero/field-exporter/issues/20)) ([6219fc3](https://github.com/deliveryhero/field-exporter/commit/6219fc36b8d3867ba191a83de8b6690f5b948f7f))
+
 ## [1.0.3](https://github.com/deliveryhero/field-exporter/compare/v1.0.2...v1.0.3) (2023-11-09)
 
 
