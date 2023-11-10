@@ -16,6 +16,28 @@ steps:
 ---
 kind: pipeline
 type: docker
+name: test
+
+trigger:
+  event:
+    - pull_request
+
+features:
+  docker-daemon@v1:
+    enabled: true
+
+steps:
+  - name: test
+    image: golang:1.21-alpine
+    commands:
+      - apk add --no-cache make bash
+      - make test
+    depends_on:
+      - clone
+
+---
+kind: pipeline
+type: docker
 name: versioning
 
 trigger:
