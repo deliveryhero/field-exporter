@@ -22,7 +22,6 @@ import (
 
 	kccredis "github.com/GoogleCloudPlatform/k8s-config-connector/pkg/clients/generated/apis/redis/v1beta1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
@@ -139,6 +138,7 @@ func (r *Reconciler) SetupWithManager(mgr ctrl.Manager) error {
 	}); err != nil {
 		return err
 	}
+
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&gdpv1alpha1.ResourceFieldExport{}).
 		Watches(
@@ -151,14 +151,10 @@ func (r *Reconciler) SetupWithManager(mgr ctrl.Manager) error {
 
 func (r *Reconciler) findFieldExports(ctx context.Context, obj client.Object) []reconcile.Request {
 	exportList := &gdpv1alpha1.ResourceFieldExportList{}
-	kindSelector := fields.OneTermEqualSelector(fromKindField, obj.GetObjectKind().GroupVersionKind().Kind)
-	nameSelector := fields.OneTermNotEqualSelector(fromNameField, obj.GetName())
-	listOpts := &client.ListOptions{
-		FieldSelector: fields.AndSelectors(kindSelector, nameSelector),
-		Namespace:     obj.GetNamespace(),
-	}
-	err := r.List(ctx, exportList, listOpts)
+	// TODO limit by kind when https://github.com/kubernetes-sigs/controller-runtime/pull/2512 is available
+	err := r.List(ctx, exportList, client.MatchingFields{fromNameField: obj.GetName()}, client.InNamespace(obj.GetNamespace()))
 	if err != nil {
+		// TODO log warning here
 		return nil
 	}
 	requests := make([]reconcile.Request, 0, len(exportList.Items))
