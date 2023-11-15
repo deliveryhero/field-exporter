@@ -1,3 +1,10 @@
+## [1.0.5](https://github.com/deliveryhero/field-exporter/compare/v1.0.4...v1.0.5) (2023-11-15)
+
+
+### Bug Fixes
+
+* query the field export only by name on watched resource change ([#21](https://github.com/deliveryhero/field-exporter/issues/21)) ([16091b0](https://github.com/deliveryhero/field-exporter/commit/16091b06d083b292ea0181ff0d36f524273fd405))
+
 ## [1.0.4](https://github.com/deliveryhero/field-exporter/compare/v1.0.3...v1.0.4) (2023-11-10)
 
 
