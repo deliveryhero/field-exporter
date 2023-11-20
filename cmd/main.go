@@ -20,8 +20,6 @@ import (
 	"flag"
 	"os"
 
-	"github.com/deliveryhero/field-exporter/internal/controller/resourcefieldexport"
-
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
@@ -30,6 +28,7 @@ import (
 	kccsql "github.com/GoogleCloudPlatform/k8s-config-connector/pkg/clients/generated/apis/sql/v1beta1"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
+	"k8s.io/client-go/discovery"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
@@ -37,6 +36,8 @@ import (
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
 	gdpv1alpha1 "github.com/deliveryhero/field-exporter/api/v1alpha1"
+	"github.com/deliveryhero/field-exporter/internal/controller/resourcefieldexport"
+	"github.com/deliveryhero/field-exporter/internal/resourcemanager"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -46,10 +47,10 @@ var (
 )
 
 func init() {
+	// add schemes of config-connector resources
 	utilruntime.Must(kccredis.AddToScheme(scheme))
 	utilruntime.Must(kccsql.AddToScheme(scheme))
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
-
 	utilruntime.Must(gdpv1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
@@ -70,8 +71,8 @@ func main() {
 	flag.Parse()
 
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
-
-	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
+	restConfig := ctrl.GetConfigOrDie()
+	mgr, err := ctrl.NewManager(restConfig, ctrl.Options{
 		Scheme:                 scheme,
 		Metrics:                metricsserver.Options{BindAddress: metricsAddr},
 		HealthProbeBindAddress: probeAddr,
@@ -94,12 +95,30 @@ func main() {
 		os.Exit(1)
 	}
 
+	discoveryClient, err := discovery.NewDiscoveryClientForConfig(restConfig)
+	if err != nil {
+		setupLog.Error(err, "unable to create discovery client")
+		os.Exit(1)
+	}
+
+	validator, err := resourcemanager.NewResourceManager(discoveryClient)
+	if err != nil {
+		setupLog.Error(err, "unable to create resource manager")
+		os.Exit(1)
+	}
+
 	if err = (&resourcefieldexport.Reconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "ResourceFieldExport")
 		os.Exit(1)
+	}
+	if os.Getenv("ENABLE_WEBHOOKS") != "false" {
+		if err = (&gdpv1alpha1.ResourceFieldExport{}).SetupWebhookWithManager(mgr, validator); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "ResourceFieldExport")
+			os.Exit(1)
+		}
 	}
 	//+kubebuilder:scaffold:builder
 
