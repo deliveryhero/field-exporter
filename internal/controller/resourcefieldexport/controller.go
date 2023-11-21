@@ -21,6 +21,7 @@ import (
 	"fmt"
 
 	kccredis "github.com/GoogleCloudPlatform/k8s-config-connector/pkg/clients/generated/apis/redis/v1beta1"
+	kccsql "github.com/GoogleCloudPlatform/k8s-config-connector/pkg/clients/generated/apis/sql/v1beta1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -143,6 +144,11 @@ func (r *Reconciler) SetupWithManager(mgr ctrl.Manager) error {
 		For(&gdpv1alpha1.ResourceFieldExport{}).
 		Watches(
 			&kccredis.RedisInstance{},
+			handler.EnqueueRequestsFromMapFunc(r.findFieldExports),
+			builder.WithPredicates(predicate.ResourceVersionChangedPredicate{}),
+		).
+		Watches(
+			&kccsql.SQLInstance{},
 			handler.EnqueueRequestsFromMapFunc(r.findFieldExports),
 			builder.WithPredicates(predicate.ResourceVersionChangedPredicate{}),
 		).
