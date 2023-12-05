@@ -60,7 +60,7 @@ type Reconciler struct {
 //+kubebuilder:rbac:groups=storage.cnrm.cloud.google.com,resources=*,verbs=get;list;watch
 
 func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	logger := log.FromContext(ctx)
 
 	fieldExports := &gdpv1alpha1.ResourceFieldExport{}
 	err := r.Client.Get(ctx, client.ObjectKey{
@@ -111,6 +111,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 		return r.degradedStatus(ctx, fieldExports, fmt.Errorf("failed to write to destination: %s", err))
 	}
 
+	logger.Info("Operator returned ready status")
 	return r.readyStatus(ctx, fieldExports)
 }
 
