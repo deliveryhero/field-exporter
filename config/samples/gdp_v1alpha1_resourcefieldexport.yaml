@@ -19,7 +19,7 @@ spec:
   requiredFields:
     statusConditions:
       - type: Ready
-        status: True
+        status: "True"
   outputs:
     - key: host
       path: .status.host

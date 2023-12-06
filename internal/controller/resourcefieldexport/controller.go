@@ -110,6 +110,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 	if err != nil {
 		return r.degradedStatus(ctx, fieldExports, fmt.Errorf("failed to write to destination: %s", err))
 	}
+	logger.Info(fmt.Sprintf("Successfully written to %s %s", string(fieldExports.Spec.To.Type), fieldExports.Spec.To.Name))
 
 	logger.Info("Operator returned ready status")
 	return r.readyStatus(ctx, fieldExports)
