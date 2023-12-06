@@ -25,13 +25,13 @@ func (r *Reconciler) writeToSecret(ctx context.Context, name string, namespace s
 }
 
 func (r *Reconciler) writeToConfigMap(ctx context.Context, name string, namespace string, values map[string]string) error {
-	var targetSecret v1.ConfigMap
-	err := r.Get(ctx, client.ObjectKey{Name: name, Namespace: namespace}, &targetSecret)
+	var targetConfigMap v1.ConfigMap
+	err := r.Get(ctx, client.ObjectKey{Name: name, Namespace: namespace}, &targetConfigMap)
 	if err != nil {
 		// todo: disambiguate on type of error
 		return err
 	}
-	cmCopy := targetSecret.DeepCopy()
+	cmCopy := targetConfigMap.DeepCopy()
 	if cmCopy.Data == nil {
 		cmCopy.Data = make(map[string]string)
 	}
