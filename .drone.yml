@@ -63,7 +63,7 @@ steps:
       - apk add git
       - git config credential.helper '!f() { echo username=deliveryhero-bot; echo "password=$GITHUB_TOKEN"; };f'
       - cp -r .github/semantic-release/. .
-      - npm i --silent
+      - npm i
       - npx semantic-release
 
 ---
