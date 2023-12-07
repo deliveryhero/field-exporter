@@ -1,3 +1,16 @@
+# [1.1.0](https://github.com/deliveryhero/field-exporter/compare/v1.0.5...v1.1.0) (2023-12-7)
+
+
+### Bug Fixes
+
+* info logs for successful statuses  ([#23](https://github.com/deliveryhero/field-exporter/issues/23)) ([90bc4f9](https://github.com/deliveryhero/field-exporter/commit/90bc4f99adea40216932c946e1ce93e333f742f2))
+* update semantic release deps ([#27](https://github.com/deliveryhero/field-exporter/issues/27)) ([aff6fde](https://github.com/deliveryhero/field-exporter/commit/aff6fde7cdbc1bcc47545a5d0eaa0f62d0b318bc))
+
+
+### Features
+
+* add support for SQLInstance ([#22](https://github.com/deliveryhero/field-exporter/issues/22)) ([57b7c8b](https://github.com/deliveryhero/field-exporter/commit/57b7c8b64497f307195666e4059d6c4e0cf904fa))
+
 ## [1.0.5](https://github.com/deliveryhero/field-exporter/compare/v1.0.4...v1.0.5) (2023-11-15)
 
 
