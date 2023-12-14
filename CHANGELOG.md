@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/deliveryhero/field-exporter/compare/v1.2.0...v1.2.1) (2023-12-14)
+
+
+### Bug Fixes
+
+* helmify target ([#29](https://github.com/deliveryhero/field-exporter/issues/29)) ([aa2882c](https://github.com/deliveryhero/field-exporter/commit/aa2882ce5d13778d4393c341a80c363fdb99970a))
+
 # [1.2.0](https://github.com/deliveryhero/field-exporter/compare/v1.1.0...v1.2.0) (2023-12-14)
 
 
