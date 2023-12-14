@@ -97,6 +97,6 @@ spec:
             memory: 128Mi
           requests:
             cpu: 10m
-            memory: 64Mi
+            memory: 128Mi
       serviceAccountName: controller-manager
       terminationGracePeriodSeconds: 10
