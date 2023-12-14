@@ -168,10 +168,10 @@ HELMIFY ?= $(LOCALBIN)/helmify
 .PHONY: helmify
 helmify: $(HELMIFY) ## Download helmify locally if necessary.
 $(HELMIFY): $(LOCALBIN)
-	test -s $(LOCALBIN)/helmify || GOBIN=$(LOCALBIN) go install github.com/arttor/helmify/cmd/helmify@0.4.7
+	test -s $(LOCALBIN)/helmify || GOBIN=$(LOCALBIN) go install github.com/arttor/helmify/cmd/helmify@v0.4.7
     
 helm: manifests kustomize helmify
-	$(KUSTOMIZE) build config/default | $(HELMIFY)
+	$(KUSTOMIZE) build config/default | $(HELMIFY) field-exporter
 
 .PHONY: lint
 lint:
