@@ -114,7 +114,7 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "ResourceFieldExport")
 		os.Exit(1)
 	}
-	if os.Getenv("ENABLE_WEBHOOKS") != "false" {
+	if os.Getenv("ENABLE_WEBHOOKS") == "true" {
 		if err = (&gdpv1alpha1.ResourceFieldExport{}).SetupWebhookWithManager(mgr, validator); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "ResourceFieldExport")
 			os.Exit(1)
