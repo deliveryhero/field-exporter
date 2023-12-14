@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/deliveryhero/field-exporter/compare/v1.1.0...v1.2.0) (2023-12-14)
+
+
+### Features
+
+* add validating webhook for resource ([#28](https://github.com/deliveryhero/field-exporter/issues/28)) ([68d1c3e](https://github.com/deliveryhero/field-exporter/commit/68d1c3e0d2889cd161ff2c438b60bc6e2ccd1024))
+
 # [1.1.0](https://github.com/deliveryhero/field-exporter/compare/v1.0.5...v1.1.0) (2023-12-7)
 
 
