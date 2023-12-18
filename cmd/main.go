@@ -24,8 +24,6 @@ import (
 	// to ensure that exec-entrypoint and run can make use of them.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
-	kccredis "github.com/GoogleCloudPlatform/k8s-config-connector/pkg/clients/generated/apis/redis/v1beta1"
-	kccsql "github.com/GoogleCloudPlatform/k8s-config-connector/pkg/clients/generated/apis/sql/v1beta1"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/discovery"
@@ -48,8 +46,6 @@ var (
 
 func init() {
 	// add schemes of config-connector resources
-	utilruntime.Must(kccredis.AddToScheme(scheme))
-	utilruntime.Must(kccsql.AddToScheme(scheme))
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 	utilruntime.Must(gdpv1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
@@ -101,21 +97,22 @@ func main() {
 		os.Exit(1)
 	}
 
-	validator, err := resourcemanager.NewResourceManager(discoveryClient)
+	resourceManager, err := resourcemanager.NewResourceManager(discoveryClient)
 	if err != nil {
 		setupLog.Error(err, "unable to create resource manager")
 		os.Exit(1)
 	}
 
 	if err = (&resourcefieldexport.Reconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
+		Client:  mgr.GetClient(),
+		Scheme:  mgr.GetScheme(),
+		Manager: resourceManager,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "ResourceFieldExport")
 		os.Exit(1)
 	}
 	if os.Getenv("ENABLE_WEBHOOKS") == "true" {
-		if err = (&gdpv1alpha1.ResourceFieldExport{}).SetupWebhookWithManager(mgr, validator); err != nil {
+		if err = (&gdpv1alpha1.ResourceFieldExport{}).SetupWebhookWithManager(mgr, resourceManager); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "ResourceFieldExport")
 			os.Exit(1)
 		}

@@ -20,8 +20,6 @@ import (
 	"context"
 	"fmt"
 
-	kccredis "github.com/GoogleCloudPlatform/k8s-config-connector/pkg/clients/generated/apis/redis/v1beta1"
-	kccsql "github.com/GoogleCloudPlatform/k8s-config-connector/pkg/clients/generated/apis/sql/v1beta1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -35,6 +33,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
 	gdpv1alpha1 "github.com/deliveryhero/field-exporter/api/v1alpha1"
+	"github.com/deliveryhero/field-exporter/internal/resourcemanager"
 )
 
 const (
@@ -46,7 +45,8 @@ const (
 // Reconciler reconciles a ResourceFieldExport object
 type Reconciler struct {
 	client.Client
-	Scheme *runtime.Scheme
+	Scheme  *runtime.Scheme
+	Manager *resourcemanager.ResourceManager
 }
 
 //+kubebuilder:rbac:groups=gdp.deliveryhero.io,resources=resourcefieldexports,verbs=get;list;watch;create;update;patch;delete
@@ -141,19 +141,9 @@ func (r *Reconciler) SetupWithManager(mgr ctrl.Manager) error {
 		return err
 	}
 
-	return ctrl.NewControllerManagedBy(mgr).
-		For(&gdpv1alpha1.ResourceFieldExport{}).
-		Watches(
-			&kccredis.RedisInstance{},
-			handler.EnqueueRequestsFromMapFunc(r.findFieldExports),
-			builder.WithPredicates(predicate.ResourceVersionChangedPredicate{}),
-		).
-		Watches(
-			&kccsql.SQLInstance{},
-			handler.EnqueueRequestsFromMapFunc(r.findFieldExports),
-			builder.WithPredicates(predicate.ResourceVersionChangedPredicate{}),
-		).
-		Complete(r)
+	controllerBuilder := ctrl.NewControllerManagedBy(mgr).For(&gdpv1alpha1.ResourceFieldExport{})
+	controllerBuilder = r.setupWatches(controllerBuilder)
+	return controllerBuilder.Complete(r)
 }
 
 func (r *Reconciler) findFieldExports(ctx context.Context, obj client.Object) []reconcile.Request {
@@ -191,4 +181,17 @@ func (r *Reconciler) resource(ctx context.Context, group, version, kind, name, n
 		return nil, fmt.Errorf("failed to get %s/%s with name %s in namespace %s", group, version, name, namespace)
 	}
 	return u.Object, nil
+}
+
+func (r *Reconciler) setupWatches(controllerBuilder *ctrl.Builder) *ctrl.Builder {
+	for _, resourceGVK := range r.Manager.Resources() {
+		unstructuredResource := &unstructured.Unstructured{}
+		unstructuredResource.SetGroupVersionKind(resourceGVK)
+		controllerBuilder = controllerBuilder.WatchesMetadata(
+			unstructuredResource,
+			handler.EnqueueRequestsFromMapFunc(r.findFieldExports),
+			builder.WithPredicates(predicate.ResourceVersionChangedPredicate{}),
+		)
+	}
+	return controllerBuilder
 }
