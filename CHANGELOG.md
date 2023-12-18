@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/deliveryhero/field-exporter/compare/v1.2.1...v1.3.0) (2023-12-18)
+
+
+### Features
+
+* start watches based on discovered resources ([#30](https://github.com/deliveryhero/field-exporter/issues/30)) ([f582c45](https://github.com/deliveryhero/field-exporter/commit/f582c4585bf598ae8a861e745ebc910db401b51c))
+
 ## [1.2.1](https://github.com/deliveryhero/field-exporter/compare/v1.2.0...v1.2.1) (2023-12-14)
 
 
