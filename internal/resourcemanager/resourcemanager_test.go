@@ -62,15 +62,16 @@ type testPreferredResources struct {
 }
 
 func (r *testPreferredResources) ServerPreferredResources() ([]*metav1.APIResourceList, error) {
-	apiResources := make([]metav1.APIResource, 0, len(r.gvks))
+	apiResources := make([]*metav1.APIResourceList, 0, len(r.gvks))
 	for _, gvk := range r.gvks {
-		apiResources = append(apiResources, metav1.APIResource{
-			Group:   gvk.Group,
-			Version: gvk.Version,
-			Kind:    gvk.Kind,
+		apiResources = append(apiResources, &metav1.APIResourceList{
+			GroupVersion: gvk.GroupVersion().Identifier(),
+			APIResources: []metav1.APIResource{
+				{Kind: gvk.Kind},
+			},
 		})
 	}
-	return []*metav1.APIResourceList{{APIResources: apiResources}}, nil
+	return apiResources, nil
 }
 
 func TestRMResources(t *testing.T) {
