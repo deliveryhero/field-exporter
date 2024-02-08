@@ -62,13 +62,17 @@ func supportedResources(client PreferredResources) (map[schema.GroupVersionKind]
 	}
 	output := make(map[schema.GroupVersionKind]struct{})
 	for _, resourceList := range preferredResources {
+		gv, err := schema.ParseGroupVersion(resourceList.GroupVersion)
+		if err != nil {
+			return nil, err
+		}
+		if _, ok := supportedAPIGroups[gv.Group]; !ok {
+			continue
+		}
 		for _, r := range resourceList.APIResources {
-			if _, ok := supportedAPIGroups[r.Group]; !ok {
-				continue
-			}
 			output[schema.GroupVersionKind{
-				Group:   r.Group,
-				Version: r.Version,
+				Group:   gv.Group,
+				Version: gv.Version,
 				Kind:    r.Kind,
 			}] = struct{}{}
 		}
