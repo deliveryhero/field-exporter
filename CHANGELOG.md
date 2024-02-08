@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/deliveryhero/field-exporter/compare/v1.3.0...v1.3.1) (2024-2-8)
+
+
+### Bug Fixes
+
+* use resource group version from top level ([#33](https://github.com/deliveryhero/field-exporter/issues/33)) ([3cbb18d](https://github.com/deliveryhero/field-exporter/commit/3cbb18d4846773c403d75c1489e0a18468ade2f4))
+
 # [1.3.0](https://github.com/deliveryhero/field-exporter/compare/v1.2.1...v1.3.0) (2023-12-18)
 
 
