@@ -6,7 +6,7 @@ import (
 
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 	controllerruntime "sigs.k8s.io/controller-runtime"
 
 	"github.com/deliveryhero/field-exporter/api/v1alpha1"
@@ -34,7 +34,7 @@ func (r *Reconciler) degradedStatus(ctx context.Context, exports *v1alpha1.Resou
 	var err error
 	if updateNeeded {
 		conditions[found].LastTransitionTime = now()
-		conditions[found].Message = pointer.String(trigger.Error())
+		conditions[found].Message = ptr.To(trigger.Error())
 		conditions[found].Status = v1.ConditionFalse
 		exports.Status.Conditions = conditions
 		err = r.Status().Update(ctx, exports)
@@ -64,7 +64,7 @@ func (r *Reconciler) readyStatus(ctx context.Context, exports *v1alpha1.Resource
 	var err error
 	if updateNeeded {
 		conditions[found].LastTransitionTime = now()
-		conditions[found].Message = pointer.String("Fields Synced")
+		conditions[found].Message = ptr.To("Fields Synced")
 		conditions[found].Status = v1.ConditionTrue
 		exports.Status.Conditions = conditions
 		err = r.Status().Update(ctx, exports)
