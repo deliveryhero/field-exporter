@@ -3,8 +3,12 @@ updates:
   - package-ecosystem: "gomod"
     directory: /
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    groups:
+      allgo:
+        patterns:
+          - "*"
   - package-ecosystem: "docker"
     directory: /
     schedule:
-      interval: "daily"
+      interval: "weekly"

@@ -15,7 +15,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/rand"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 	cr "sigs.k8s.io/controller-runtime/pkg/client"
 
 	gdpv1alpha1 "github.com/deliveryhero/field-exporter/api/v1alpha1"
@@ -47,10 +47,10 @@ var _ = Describe("ResourceFieldExport controller", func() {
 				Namespace: testNamespace,
 			},
 			Spec: redisv1beta1.RedisInstanceSpec{
-				DisplayName:      pointer.String("test-0001-testdb-default"),
+				DisplayName:      ptr.To("test-0001-testdb-default"),
 				MemorySizeGb:     5,
-				ReadReplicasMode: pointer.String("READ_REPLICAS_ENABLED"),
-				RedisVersion:     pointer.String("REDIS_6_X"),
+				ReadReplicasMode: ptr.To("READ_REPLICAS_ENABLED"),
+				RedisVersion:     ptr.To("REDIS_6_X"),
 			},
 		}
 		redisInstanceMap, err := runtime.DefaultUnstructuredConverter.ToUnstructured(redisInstance.DeepCopy())
