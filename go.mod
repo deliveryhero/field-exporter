@@ -2,8 +2,6 @@ module github.com/deliveryhero/field-exporter
 
 go 1.21
 
-toolchain go1.22.0
-
 require (
 	github.com/GoogleCloudPlatform/k8s-config-connector v1.111.0
 	github.com/itchyny/gojq v0.12.13
