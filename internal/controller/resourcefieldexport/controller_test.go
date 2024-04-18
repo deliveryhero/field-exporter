@@ -18,8 +18,9 @@ import (
 	"k8s.io/utils/ptr"
 	cr "sigs.k8s.io/controller-runtime/pkg/client"
 
-	gdpv1alpha1 "github.com/deliveryhero/field-exporter/api/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	gdpv1alpha1 "github.com/deliveryhero/field-exporter/api/v1alpha1"
 )
 
 var _ = Describe("ResourceFieldExport controller", func() {
@@ -31,7 +32,7 @@ var _ = Describe("ResourceFieldExport controller", func() {
 		ctx := context.Background()
 
 		// generate randomized test namespace name
-		testNamespace = fmt.Sprintf("test-%3d", rand.Intn(10000))
+		testNamespace = fmt.Sprintf("test-%03d", rand.Intn(10000))
 		// create the test namespace
 		namespace := &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: testNamespace}}
 		Expect(k8sClient.Create(ctx, namespace)).Should(Succeed())
