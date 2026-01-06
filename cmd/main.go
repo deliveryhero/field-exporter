@@ -102,6 +102,7 @@ func main() {
 		setupLog.Error(err, "unable to create resource manager")
 		os.Exit(1)
 	}
+	setupLog.Info("resource manager initialized", "discoveredResources", len(resourceManager.Resources()))
 
 	if err = (&resourcefieldexport.Reconciler{
 		Client:  mgr.GetClient(),

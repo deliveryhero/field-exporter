@@ -69,22 +69,30 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 	}, fieldExports)
 
 	if err != nil {
+		logger.Error(err, "failed to get ResourceFieldExport")
 		return ctrl.Result{}, err
 	}
 
 	fromResource := fieldExports.Spec.From
 	group, version, err := groupVersion(fromResource)
 	if err != nil {
+		logger.Error(err, "failed to parse group and version from resource",
+			"apiVersion", fromResource.APIVersion)
 		return r.degradedStatus(ctx, fieldExports, err)
 	}
 
 	objectMap, err := r.resource(ctx, group, version, fromResource.Kind, fromResource.Name, req.Namespace)
 	if err != nil {
+		logger.Error(err, "failed to get source resource",
+			"kind", fromResource.Kind,
+			"name", fromResource.Name,
+			"namespace", req.Namespace)
 		return r.degradedStatus(ctx, fieldExports, err)
 	}
 
 	if fieldExports.Spec.RequiredFields != nil {
 		if err := verifyStatusConditions(ctx, objectMap, fieldExports.Spec.RequiredFields.StatusConditions); err != nil {
+			logger.Error(err, "required status conditions not met")
 			return r.degradedStatus(ctx, fieldExports, err)
 		}
 	}
@@ -93,6 +101,9 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 	for _, export := range fieldExports.Spec.Outputs {
 		value, err := fieldStringValue(ctx, objectMap, export.Path)
 		if err != nil {
+			logger.Error(err, "failed to extract field value",
+				"path", export.Path,
+				"key", export.Key)
 			return r.degradedStatus(ctx, fieldExports, err)
 		}
 		cmValues[export.Key] = value
@@ -108,6 +119,9 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 	}
 
 	if err != nil {
+		logger.Error(err, "failed to write to destination",
+			"type", fieldExports.Spec.To.Type,
+			"name", fieldExports.Spec.To.Name)
 		return r.degradedStatus(ctx, fieldExports, fmt.Errorf("failed to write to destination: %s", err))
 	}
 	logger.Info("output written to", "type", fieldExports.Spec.To.Type, "name", fieldExports.Spec.To.Name)
@@ -147,11 +161,20 @@ func (r *Reconciler) SetupWithManager(mgr ctrl.Manager) error {
 }
 
 func (r *Reconciler) findFieldExports(ctx context.Context, obj client.Object) []reconcile.Request {
+	logger := log.FromContext(ctx)
 	exportList := &gdpv1alpha1.ResourceFieldExportList{}
-	// TODO limit by kind when https://github.com/kubernetes-sigs/controller-runtime/pull/2512 is available
-	err := r.List(ctx, exportList, client.MatchingFields{fromNameField: obj.GetName()}, client.InNamespace(obj.GetNamespace()))
+
+	// Filter by both kind and name for better efficiency
+	kind := obj.GetObjectKind().GroupVersionKind().Kind
+	err := r.List(ctx, exportList, client.MatchingFields{
+		fromKindField: kind,
+		fromNameField: obj.GetName(),
+	}, client.InNamespace(obj.GetNamespace()))
 	if err != nil {
-		// TODO log warning here
+		logger.Error(err, "failed to list ResourceFieldExports for watch trigger",
+			"sourceKind", kind,
+			"sourceName", obj.GetName(),
+			"namespace", obj.GetNamespace())
 		return nil
 	}
 	requests := make([]reconcile.Request, 0, len(exportList.Items))
