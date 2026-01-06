@@ -78,9 +78,8 @@ jobs:
         with:
           context: .
           push: true
-          # Tags using the semantic version
+          # Tags using the semantic version ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.semantic.outputs.new_release_version }}
           tags: |
-            # ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.semantic.outputs.new_release_version }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Helmify and Release Chart
