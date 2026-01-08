@@ -46,7 +46,7 @@ jobs:
   release:
     name: Release Package
     needs: [test, lint]
-    # if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -78,28 +78,6 @@ jobs:
         with:
           context: .
           push: true
-          # Tags using the semantic version ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.semantic.outputs.new_release_version }}
+          # Tags using the semantic version
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-
-      - name: helmify
-        if: steps.semantic.outputs.new_release_published == 'false'
-        run: IMG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.semantic.outputs.new_release_version }} make helm
-
-      - name: "Update Chart.yaml version and appVersion"
-        if: steps.semantic.outputs.new_release_published == 'false'
-        uses: mikefarah/yq@v4
-        with:
-          cmd: yq -i '.version = "${{ steps.semantic.outputs.new_release_version }}" | .appVersion = "${{ steps.semantic.outputs.new_release_version }}"' field-exporter/Chart.yaml
-
-      - name: "Publish Helm chart to GHCR"
-        if: steps.semantic.outputs.new_release_published == 'false'
-        uses: appany/helm-oci-chart-releaser@v0.3.0
-        with:
-          name: field-exporter
-          repository: ${{ github.repository }}/helm-chart
-          tag: ${{ steps.semantic.outputs.new_release_version }}
-          path: field-exporter
-          registry: ${{ env.REGISTRY }}
-          registry_username: ${{ github.actor }}
-          registry_password: ${{ secrets.GITHUB_TOKEN }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.semantic.outputs.new_release_version }}
