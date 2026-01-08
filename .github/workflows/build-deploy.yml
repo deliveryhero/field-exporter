@@ -46,7 +46,8 @@ jobs:
   release:
     name: Release Package
     needs: [test, lint]
-    # if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
+    #TODO make it back to main
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/move-github-actions' || startsWith(github.ref, 'refs/tags/'))
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -72,7 +73,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
-        if: steps.semantic.outputs.new_release_published == 'false'
+        if: steps.semantic.outputs.new_release_published == 'true'
         id: push
         uses: docker/build-push-action@v5
         with:
@@ -82,12 +83,9 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
-      - name: Helmify and Release Chart
+      - name: helmify
         if: steps.semantic.outputs.new_release_published == 'true'
-        env:
-          IMG: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.semantic.outputs.new_release_version }}
-        run: |
-          make helm
+        run: IMG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.semantic.outputs.new_release_version }} make helm
 
       - name: "Update Chart.yaml version and appVersion"
         if: steps.semantic.outputs.new_release_published == 'true'
