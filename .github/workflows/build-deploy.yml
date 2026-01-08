@@ -84,5 +84,25 @@ jobs:
 
       - name: Helmify and Release Chart
         if: steps.semantic.outputs.new_release_published == 'true'
+        env:
+          IMG: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.semantic.outputs.new_release_version }}
         run: |
           make helm
+
+      - name: "Update Chart.yaml version and appVersion"
+        if: steps.semantic.outputs.new_release_published == 'true'
+        uses: mikefarah/yq@v4
+        with:
+          cmd: yq -i '.version = "${{ steps.semantic.outputs.new_release_version }}" | .appVersion = "${{ steps.semantic.outputs.new_release_version }}"' field-exporter/Chart.yaml
+
+      - name: "Publish Helm chart to GHCR"
+        if: steps.semantic.outputs.new_release_published == 'true'
+        uses: appany/helm-oci-chart-releaser@v0.3.0
+        with:
+          name: field-exporter
+          repository: ${{ github.repository }}/helm-chart
+          tag: ${{ steps.semantic.outputs.new_release_version }}
+          path: field-exporter
+          registry: ${{ env.REGISTRY }}
+          registry_username: ${{ github.actor }}
+          registry_password: ${{ secrets.GITHUB_TOKEN }}
