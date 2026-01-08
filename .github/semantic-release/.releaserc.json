@@ -1,6 +1,6 @@
 {
   "branches": [
-    "move-github-actions"
+    "main"
   ],
   "verifyConditions": [
     "@semantic-release/changelog",
