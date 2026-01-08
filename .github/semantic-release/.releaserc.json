@@ -1,6 +1,11 @@
 {
-  "branches": ["main"],
-  "verifyConditions": ["@semantic-release/changelog", "@semantic-release/git"],
+  "branches": [
+    "move-github-actions"
+  ],
+  "verifyConditions": [
+    "@semantic-release/changelog",
+    "@semantic-release/git"
+  ],
   "prepare": [
     "@semantic-release/changelog",
     {
@@ -9,7 +14,9 @@
     },
     {
       "path": "@semantic-release/git",
-      "assets": ["CHANGELOG.md"],
+      "assets": [
+        "CHANGELOG.md"
+      ],
       "message": "release: ${nextRelease.version} [ci skip]"
     }
   ],
