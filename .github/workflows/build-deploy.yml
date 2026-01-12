@@ -70,6 +70,8 @@ jobs:
         id: semantic
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_AUTHOR_NAME: "deliveryhero-bot"
+          GIT_AUTHOR_EMAIL: "bot.cicd.ext@deliveryhero.com"
 
       - name: Build and push Docker image
         if: steps.semantic.outputs.new_release_published == 'true'
