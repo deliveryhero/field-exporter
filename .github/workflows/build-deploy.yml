@@ -80,6 +80,6 @@ jobs:
         with:
           context: .
           push: true
-          # Tags using the semantic version
+          # Tags using the semantic version new_release_git_tag
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.semantic.outputs.new_release_version }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.semantic.outputs.new_release_git_tag }}
