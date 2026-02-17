@@ -27,3 +27,5 @@ Dockerfile.cross
 
 # helm chart directory
 field-exporter
+
+.go-version

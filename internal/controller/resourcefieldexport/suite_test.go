@@ -68,6 +68,7 @@ var _ = BeforeSuite(func() {
 		CRDDirectoryPaths: []string{
 			filepath.Join("..", "..", "..", "config", "crd", "bases"),
 			filepath.Join("..", "..", "..", "hack", "config-connector-crds"),
+			filepath.Join("..", "..", "..", "hack", "ack-crds"), // Add path for AWS CRDs
 		},
 		ErrorIfCRDPathMissing: true,
 

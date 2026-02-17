@@ -2,6 +2,7 @@ package resourcemanager
 
 import (
 	"fmt"
+	"sort"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -14,6 +15,9 @@ var (
 		"redis.cnrm.cloud.google.com":   {},
 		"sql.cnrm.cloud.google.com":     {},
 		"storage.cnrm.cloud.google.com": {},
+		"rds.services.k8s.aws":          {},
+		"elasticache.services.k8s.aws":  {},
+		"dynamodb.services.k8s.aws":     {},
 	}
 )
 
@@ -40,7 +44,9 @@ func (r *ResourceManager) Validate(apiVersion, kind string) error {
 	}
 
 	if _, ok := supportedAPIGroups[gv.Group]; !ok {
-		return fmt.Errorf("unsupported GroupVersion %s", gv)
+		supportedSuffixes := []string{"cnrm.cloud.google.com", "services.k8s.aws"}
+		sort.Strings(supportedSuffixes)
+		return fmt.Errorf("unsupported GroupVersion %s, group must have suffix in %v", gv, supportedSuffixes)
 	}
 
 	gvk := schema.GroupVersionKind{

@@ -58,6 +58,9 @@ type Reconciler struct {
 //+kubebuilder:rbac:groups=redis.cnrm.cloud.google.com,resources=*,verbs=get;list;watch
 //+kubebuilder:rbac:groups=sql.cnrm.cloud.google.com,resources=*,verbs=get;list;watch
 //+kubebuilder:rbac:groups=storage.cnrm.cloud.google.com,resources=*,verbs=get;list;watch
+//+kubebuilder:rbac:groups=rds.services.k8s.aws,resources=*,verbs=get;list;watch
+//+kubebuilder:rbac:groups=elasticache.services.k8s.aws,resources=*,verbs=get;list;watch
+//+kubebuilder:rbac:groups=dynamodb.services.k8s.aws,resources=*,verbs=get;list;watch
 
 func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
@@ -70,7 +73,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 
 	if err != nil {
 		logger.Error(err, "failed to get ResourceFieldExport")
-		return ctrl.Result{}, err
+		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
 	fromResource := fieldExports.Spec.From
@@ -92,8 +95,15 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 
 	if fieldExports.Spec.RequiredFields != nil {
 		if err := verifyStatusConditions(ctx, objectMap, fieldExports.Spec.RequiredFields.StatusConditions); err != nil {
-			logger.Error(err, "required status conditions not met")
-			return r.degradedStatus(ctx, fieldExports, err)
+			// This is not a fatal error, but a transient one. The resource is likely still being created.
+			// We log it as Info and requeue the request.
+			logger.Info("Required status conditions not met, will requeue", "reason", err.Error())
+			// We call degradedStatus to update the status on the CR, but we return a nil error
+			// to the controller-runtime. This prevents a scary "ERROR" log for what is a normal
+			// transient state (waiting for a resource to be ready). The result from degradedStatus
+			// will ensure we requeue.
+			res, _ := r.degradedStatus(ctx, fieldExports, err)
+			return res, nil
 		}
 	}
 

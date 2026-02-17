@@ -9,8 +9,11 @@ import (
 	"github.com/deliveryhero/field-exporter/api/v1alpha1"
 )
 
-const (
-	ccGroupSuffix = "cnrm.cloud.google.com"
+var (
+	supportedGroupSuffixes = []string{
+		"cnrm.cloud.google.com",
+		"services.k8s.aws",
+	}
 )
 
 func groupVersion(from v1alpha1.ResourceRef) (string, string, error) {
@@ -25,8 +28,10 @@ func groupVersion(from v1alpha1.ResourceRef) (string, string, error) {
 		return "", "", fmt.Errorf("apiVersion %s is invalid", fromAPIVersion)
 	}
 
-	if !strings.HasSuffix(gv.Group, ccGroupSuffix) {
-		return "", "", fmt.Errorf("unsupported apiVersion: %s, needs to be part of %s", fromAPIVersion, ccGroupSuffix)
+	for _, suffix := range supportedGroupSuffixes {
+		if strings.HasSuffix(gv.Group, suffix) {
+			return gv.Group, gv.Version, nil
+		}
 	}
-	return gv.Group, gv.Version, nil
+	return "", "", fmt.Errorf("unsupported apiVersion: %s, needs to be part of %v", fromAPIVersion, supportedGroupSuffixes)
 }

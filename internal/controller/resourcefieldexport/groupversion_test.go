@@ -16,7 +16,7 @@ func TestGroupVersion(t *testing.T) {
 		expectErr     string
 	}{
 		{
-			name: "bucket",
+			name: "gcp bucket",
 			input: gdpv1alpha1.ResourceRef{
 				APIVersion: "storage.cnrm.cloud.google.com/v1alpha1",
 				Kind:       "Bucket",
@@ -25,7 +25,16 @@ func TestGroupVersion(t *testing.T) {
 			expectVersion: "v1alpha1",
 		},
 		{
-			name: "bucket malformed",
+			name: "aws rds dbcluster",
+			input: gdpv1alpha1.ResourceRef{
+				APIVersion: "rds.services.k8s.aws/v1alpha1",
+				Kind:       "DBCluster",
+			},
+			expectGroup:   "rds.services.k8s.aws",
+			expectVersion: "v1alpha1",
+		},
+		{
+			name: "malformed apiVersion",
 			input: gdpv1alpha1.ResourceRef{
 				APIVersion: "storage.cnrm.cloud.google.com",
 			},
@@ -33,8 +42,8 @@ func TestGroupVersion(t *testing.T) {
 		},
 		{
 			name:      "unsupported resource",
-			input:     gdpv1alpha1.ResourceRef{APIVersion: "dbcluster.rds.services.k8s.aws/v1alpha2"},
-			expectErr: "unsupported apiVersion: dbcluster.rds.services.k8s.aws/v1alpha2, needs to be part of cnrm.cloud.google.com",
+			input:     gdpv1alpha1.ResourceRef{APIVersion: "unsupported.group/v1"},
+			expectErr: "unsupported apiVersion: unsupported.group/v1, needs to be part of [cnrm.cloud.google.com services.k8s.aws]",
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {

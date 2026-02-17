@@ -13,6 +13,7 @@ func TestRMValidate(t *testing.T) {
 		{Version: "v1", Kind: "Secret"},
 		{Group: "redis.cnrm.cloud.google.com", Version: "v1beta1", Kind: "RedisInstance"},
 		{Group: "sql.cnrm.cloud.google.com", Version: "v1beta1", Kind: "SQLInstance"},
+		{Group: "rds.services.k8s.aws", Version: "v1alpha1", Kind: "DBCluster"},
 	}
 	for _, tc := range []struct {
 		name       string
@@ -24,13 +25,13 @@ func TestRMValidate(t *testing.T) {
 			name:       "valid resource, invalid group",
 			apiVersion: "v1",
 			kind:       "Secret",
-			expectErr:  "unsupported GroupVersion v1",
+			expectErr:  "unsupported GroupVersion v1, group must have suffix in [cnrm.cloud.google.com services.k8s.aws]",
 		},
 		{
 			name:       "invalid resource, invalid group",
 			apiVersion: "v1",
 			kind:       "RedisCluster",
-			expectErr:  "unsupported GroupVersion v1",
+			expectErr:  "unsupported GroupVersion v1, group must have suffix in [cnrm.cloud.google.com services.k8s.aws]",
 		},
 		{
 			name:       "invalid resource, valid group",
@@ -42,6 +43,17 @@ func TestRMValidate(t *testing.T) {
 			name:       "valid resource, valid group",
 			apiVersion: "sql.cnrm.cloud.google.com/v1beta1",
 			kind:       "SQLInstance",
+		},
+		{
+			name:       "valid aws resource, valid group",
+			apiVersion: "rds.services.k8s.aws/v1alpha1",
+			kind:       "DBCluster",
+		},
+		{
+			name:       "invalid aws resource, valid group",
+			apiVersion: "rds.services.k8s.aws/v1alpha1",
+			kind:       "S3Bucket",
+			expectErr:  "unsupported resource: rds.services.k8s.aws/v1alpha1, Kind=S3Bucket",
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -80,6 +92,7 @@ func TestRMResources(t *testing.T) {
 	clusterGVK := schema.GroupVersionKind{Group: "redis.cnrm.cloud.google.com", Version: "v1beta1", Kind: "RedisCluster"}
 	sqlGVK := schema.GroupVersionKind{Group: "sql.cnrm.cloud.google.com", Version: "v1beta1", Kind: "SQLInstance"}
 	userGVK := schema.GroupVersionKind{Group: "sql.cnrm.cloud.google.com", Version: "v1beta1", Kind: "SQLUser"}
+	DBClusterGVK := schema.GroupVersionKind{Group: "rds.services.k8s.aws", Version: "v1alpha1", Kind: "DBCluster"}
 	for _, tc := range []struct {
 		name           string
 		registeredGVKs []schema.GroupVersionKind
@@ -110,12 +123,14 @@ func TestRMResources(t *testing.T) {
 				clusterGVK,
 				userGVK,
 				redisGVK,
+				DBClusterGVK,
 			},
 			expectedGVKs: []schema.GroupVersionKind{
 				sqlGVK,
 				clusterGVK,
 				userGVK,
 				redisGVK,
+				DBClusterGVK,
 			},
 		},
 	} {

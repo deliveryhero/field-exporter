@@ -6,6 +6,13 @@ metadata:
 rules:
 - apiGroups:
   - alloydb.cnrm.cloud.google.com
+  - dynamodb.services.k8s.aws
+  - elasticache.services.k8s.aws
+  - iam.cnrm.cloud.google.com
+  - rds.services.k8s.aws
+  - redis.cnrm.cloud.google.com
+  - sql.cnrm.cloud.google.com
+  - storage.cnrm.cloud.google.com
   resources:
   - '*'
   verbs:
@@ -49,35 +56,3 @@ rules:
   - get
   - patch
   - update
-- apiGroups:
-  - iam.cnrm.cloud.google.com
-  resources:
-  - '*'
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - redis.cnrm.cloud.google.com
-  resources:
-  - '*'
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - sql.cnrm.cloud.google.com
-  resources:
-  - '*'
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - storage.cnrm.cloud.google.com
-  resources:
-  - '*'
-  verbs:
-  - get
-  - list
-  - watch
