@@ -1,0 +1,21 @@
+internal/controller/resourcefieldexport/controller.go
+  s_ccd369a1983f97::t_27c99300d33e74 69
+internal/controller/resourcefieldexport/controller_test.go
+  s_ccd369a1983f97::t_17eda68fb859ec 75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3b2e485604fc1c5a7f6db7bfb0694dbe85fb467c",
+  "prompts": {},
+  "sessions": {
+    "s_ccd369a1983f97": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "931fab11-819d-41a7-8d4c-ef29e22ea715",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "jijinp <jijin.puthuvakkattil@deliveryhero.com>"
+    }
+  }
+}
