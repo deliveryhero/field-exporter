@@ -1,6 +1,6 @@
 module github.com/deliveryhero/field-exporter
 
-go 1.22.0
+go 1.26.10
 
 require (
 	github.com/GoogleCloudPlatform/k8s-config-connector v1.111.0

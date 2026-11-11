@@ -1,72 +1,13 @@
+version: "2"
 run:
-  deadline: 5m
   allow-parallel-runners: true
-
-issues:
-  # don't skip warning about doc comments
-  # don't exclude the default set of lint
-  exclude-use-default: false
-  # restore some of the defaults
-  # (fill in the rest as needed)
-  exclude-rules:
-    - linters: [gosec]
-      path: "test/e2e/*"
-    - path: "hack/docs/*"
-      linters:
-        - gosec
-
-linters-settings:
-  govet:
-    enable=fieldalignment: true
-  revive:
-    rules:
-      # The following rules are recommended https://github.com/mgechev/revive#recommended-configuration
-      - name: blank-imports
-      - name: context-as-argument
-      - name: context-keys-type
-      - name: dot-imports
-      - name: error-return
-      - name: error-strings
-      - name: error-naming
-      - name: exported
-        disabled: true  # TODO: Investigate if it should be enabled. Disabled for now due to many findings.
-      - name: if-return
-        disabled: true  # TODO: Investigate if it should be enabled. Disabled for now due to many findings.
-      - name: increment-decrement
-      - name: var-naming
-        disabled: true   # TODO: Investigate if it should be enabled. Disabled for now due to many findings.
-      - name: var-declaration
-      - name: package-comments
-        disabled: true  # TODO: Investigate if it should be enabled. Disabled for now due to many findings.
-      - name: range
-      - name: receiver-naming
-      - name: time-naming
-      - name: unexported-return
-      - name: indent-error-flow
-      - name: errorf
-      - name: empty-block
-        disabled: true  # TODO: Investigate if it should be enabled. Disabled for now due to many findings.
-      - name: superfluous-else
-      - name: unused-parameter
-      - name: unreachable-code
-      - name: redefines-builtin-id
-      #
-      # Rules in addition to the recommended configuration above.
-      #
-      - name: bool-literal-in-expr
-      - name: constant-logical-expr
-
 linters:
-  disable-all: true
+  default: none
   enable:
     - dupl
     - errcheck
-    - exportloopref
     - goconst
     - gocyclo
-    - gofmt
-    - goimports
-    - gosimple
     - govet
     - ineffassign
     - misspell
@@ -74,7 +15,63 @@ linters:
     - prealloc
     - revive
     - staticcheck
-    - typecheck
     - unconvert
     - unparam
     - unused
+  settings:
+    revive:
+      rules:
+        - name: blank-imports
+        - name: context-as-argument
+        - name: context-keys-type
+        - name: dot-imports
+        - name: error-return
+        - name: error-strings
+        - name: error-naming
+        - name: exported
+          disabled: true
+        - name: if-return
+          disabled: true
+        - name: increment-decrement
+        - name: var-naming
+          disabled: true
+        - name: var-declaration
+        - name: package-comments
+          disabled: true
+        - name: range
+        - name: receiver-naming
+        - name: time-naming
+        - name: unexported-return
+        - name: indent-error-flow
+        - name: errorf
+        - name: empty-block
+          disabled: true
+        - name: superfluous-else
+        - name: unused-parameter
+        - name: unreachable-code
+        - name: redefines-builtin-id
+        - name: bool-literal-in-expr
+        - name: constant-logical-expr
+  exclusions:
+    generated: lax
+    rules:
+      - linters:
+          - gosec
+        path: test/e2e/*
+      - linters:
+          - gosec
+        path: hack/docs/*
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
