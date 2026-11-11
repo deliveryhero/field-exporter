@@ -10,7 +10,6 @@ import (
 
 	redisv1beta1 "github.com/GoogleCloudPlatform/k8s-config-connector/pkg/clients/generated/apis/redis/v1beta1"
 	corev1 "k8s.io/api/core/v1"
-	apimetav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
@@ -73,7 +72,7 @@ var _ = Describe("ResourceFieldExport controller", func() {
 	AfterEach(func() {
 		ctx := context.Background()
 		namespace := &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: testNamespace}}
-		Expect(k8sClient.Delete(ctx, namespace, cr.PropagationPolicy(apimetav1.DeletePropagationForeground))).Should(Succeed())
+		Expect(k8sClient.Delete(ctx, namespace, cr.PropagationPolicy(metav1.DeletePropagationForeground))).Should(Succeed())
 	})
 
 	Context("for existing source resource (GCP)", func() {
