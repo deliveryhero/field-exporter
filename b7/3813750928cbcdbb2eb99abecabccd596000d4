@@ -1,0 +1,35 @@
+.golangci.yaml
+  s_ccd369a1983f97::t_ea94008847450d 1,5,21-77
+config/rbac/role.yaml
+  s_ccd369a1983f97::t_f066a15b9c71de 7-17
+.github/workflows/build-deploy.yml
+  s_ccd369a1983f97::t_42cb74fdc123d9 13,26,28
+go.mod
+  s_ccd369a1983f97::t_214b78f8d81179 3
+Dockerfile
+  s_ccd369a1983f97::t_057eb0c13a8ede 2
+config/crd/bases/gdp.deliveryhero.io_resourcefieldexports.yaml
+  s_ccd369a1983f97::t_928fec3ed59fab 6
+Makefile
+  s_ccd369a1983f97::t_0a75767e9b85c4 149
+internal/controller/resourcefieldexport/controller.go
+  s_ccd369a1983f97::t_27c99300d33e74 69
+internal/controller/resourcefieldexport/controller_test.go
+  s_ccd369a1983f97::t_17eda68fb859ec 75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b73813750928cbcdbb2eb99abecabccd596000d4",
+  "prompts": {},
+  "sessions": {
+    "s_ccd369a1983f97": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "931fab11-819d-41a7-8d4c-ef29e22ea715",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "jijinp <jijin.puthuvakkattil@deliveryhero.com>"
+    }
+  }
+}
